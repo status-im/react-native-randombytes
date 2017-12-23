@@ -16,12 +16,12 @@
 #include "rnrandombytesdesktop.h"
 #include <QCryptographicHash>
 #include <QDateTime>
+#include <QDebug>
 #include <QMap>
 #include <QNetworkDiskCache>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QQuickImageProvider>
-
 
 namespace {
 struct RegisterQMLMetaType {
@@ -35,17 +35,34 @@ class RNRandomBytesPrivate {
 
 public:
     RNRandomBytesPrivate() {
-        qsrand(QDateTime::currentDateTime().currentMSecsSinceEpoch());
-        while (seed.size() < 4096) {
-            seed.append(QChar(qrand()));
-        }
+        seed = generateRandomBytes(4096);
     }
+
+    QString generateRandomBytes(int size);
+
     QString seed;
+    Bridge* bridge = nullptr;
 };
 
 RNRandomBytes::RNRandomBytes(QObject* parent) : QObject(parent), d_ptr(new RNRandomBytesPrivate) {}
 
 RNRandomBytes::~RNRandomBytes() {}
+
+QString RNRandomBytesPrivate::generateRandomBytes(int size) {
+    QString randomString;
+    qsrand(QDateTime::currentDateTime().currentMSecsSinceEpoch());
+    while (randomString.size() < size) {
+        randomString.append(QChar(qrand()));
+    }
+    return randomString;
+}
+
+void RNRandomBytes::randomBytes(int length, double funcId) {
+    Q_D(RNRandomBytes);
+    if (d->bridge) {
+        d->bridge->invokePromiseCallback(funcId, QVariantList{"", d->generateRandomBytes(length)});
+    }
+}
 
 QString RNRandomBytes::moduleName() {
     return "RNRandomBytes";
@@ -57,4 +74,9 @@ QList<ModuleMethod*> RNRandomBytes::methodsToExport() {
 
 QVariantMap RNRandomBytes::constantsToExport() {
     return QVariantMap{{"seed", d_ptr->seed}};
+}
+
+void RNRandomBytes::setBridge(Bridge* bridge) {
+    Q_D(RNRandomBytes);
+    d->bridge = bridge;
 }

@@ -34,9 +34,11 @@ public:
     Q_INVOKABLE RNRandomBytes(QObject* parent = 0);
     ~RNRandomBytes();
 
-    QString moduleName() override;
-    QList<ModuleMethod*> methodsToExport() override;
-    QVariantMap constantsToExport() override;
+    Q_INVOKABLE void randomBytes(int length, double funcId);
+    virtual QString moduleName() override;
+    virtual QList<ModuleMethod*> methodsToExport() override;
+    virtual QVariantMap constantsToExport() override;
+    virtual void setBridge(Bridge* bridge) override;
 
 private:
     QScopedPointer<RNRandomBytesPrivate> d_ptr;
