@@ -13,7 +13,7 @@
 #include <memory>
 
 #include "bridge.h"
-#include "rnrandombytes.h"
+#include "rnrandombytesdesktop.h"
 #include <QCryptographicHash>
 #include <QDateTime>
 #include <QMap>
@@ -21,6 +21,15 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QQuickImageProvider>
+
+
+namespace {
+struct RegisterQMLMetaType {
+    RegisterQMLMetaType() {
+        qRegisterMetaType<RNRandomBytes*>();
+    }
+} registerMetaType;
+} // namespace
 
 class RNRandomBytesPrivate {
 

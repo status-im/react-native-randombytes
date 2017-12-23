@@ -31,7 +31,7 @@ public:
 
     typedef std::function<void(Event, const QVariantMap&)> LoadEventCallback;
 
-    RNRandomBytes(QObject* parent = 0);
+    Q_INVOKABLE RNRandomBytes(QObject* parent = 0);
     ~RNRandomBytes();
 
     QString moduleName() override;
