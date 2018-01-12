@@ -54,7 +54,7 @@ QString RNRandomBytesPrivate::generateRandomBytes(int size) {
     while (randomString.size() < size) {
         randomString.append(QChar(qrand()));
     }
-    return randomString;
+    return randomString.toUtf8().toBase64();
 }
 
 void RNRandomBytes::randomBytes(int length, double funcId) {
